@@ -2,11 +2,8 @@ package com.example.lol.lol.Repositories;
 
 import com.example.lol.lol.model.ProductImage;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface ProductImageRepository extends JpaRepository<ProductImage, Long> {
-    ProductImage findByName(String name);
-    <Optional>ProductImage findProductImageById(Long id);
+public interface ProductImageRepository extends JpaRepository<ProductImage, Long>, JpaSpecificationExecutor<ProductImage> {
 
-    @Override
-    void deleteById(Long id);
 }

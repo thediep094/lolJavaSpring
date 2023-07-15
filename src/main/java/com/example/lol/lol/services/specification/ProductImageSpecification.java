@@ -1,4 +1,4 @@
-package com.example.lol.lol.specification;
+package com.example.lol.lol.services.specification;
 
 import com.example.lol.lol.model.ProductImage;
 import org.springframework.data.jpa.domain.Specification;

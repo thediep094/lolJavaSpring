@@ -5,6 +5,9 @@ import com.example.lol.lol.services.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,32 +22,26 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    // Get All Products with filter
     @GetMapping("/")
-    public ResponseEntity<ResponseObject> getAll(@RequestParam(required = false) String filter, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize) {
-        List<Product> products;
-        if ( filter != null && !filter.isEmpty() ) {
-            //Not filter by anything will do later
-            products = productService.getAllProducts();
+    public ResponseEntity<ResponseObject> getAll(@RequestParam(required = false) String filter,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<Product> productPage;
+        if (filter != null && !filter.isEmpty()) {
+            // Filter logic here, if needed
+            productPage = productService.getAllProducts(pageable);
         } else {
-            products = productService.getAllProducts();
+            productPage = productService.getAllProducts(pageable);
         }
 
-        // Apply pagination
-        int totalItems = products.size();
-        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
-
-        int startIndex = page * pageSize;
-        int endIndex = Math.min(startIndex + pageSize, totalItems);
-
-        List<Product> paginatedProducts = products.subList(startIndex, endIndex);
+        List<Product> paginatedProducts = productPage.getContent();
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK", "Fetch success", paginatedProducts)
         );
     }
-
-
     //Get Product by Id
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getProduct (@PathVariable Long id) {

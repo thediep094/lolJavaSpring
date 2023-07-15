@@ -55,15 +55,6 @@ public class Database {
                 product.setEstimatedShipDate(new Date());
                 productRepository.save(product);
 
-                ProductImage productImage1 = new ProductImage();
-                productImage1.setName("Image 1");
-                productImage1.setProduct(product);
-                productImageRepository.save(productImage1);
-
-                ProductImage productImage2 = new ProductImage();
-                productImage2.setName("Image 2");
-                productImage2.setProduct(product);
-                productImageRepository.save(productImage2);
 
             }
         };

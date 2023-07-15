@@ -1,4 +1,4 @@
-package com.example.lol.lol.specification;
+package com.example.lol.lol.services.specification;
 
 
 import com.example.lol.lol.model.Product;
@@ -7,6 +7,12 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.Date;
 
 public class ProductSpecification {
+
+
+    public static Specification<Product> hasId(long productId) {
+        return (root, query, builder) ->
+                builder.equal(root.get("id"), productId);
+    }
 
     public static Specification<Product> hasName(String name) {
         return (root, query, builder) ->
