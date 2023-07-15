@@ -2,6 +2,7 @@ package com.example.lol.lol.services.product;
 
 import com.example.lol.lol.Repositories.ProductRepository;
 import com.example.lol.lol.model.*;
+import com.example.lol.lol.services.dto.ProductDTO;
 import com.example.lol.lol.services.specification.ProductSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,42 @@ public class ProductServiceIml implements ProductService{
         return productRepository.findAll(pageable);
     }
 
+
+
     @Override
-    public Product updateProduct(Product product) {
-        log.info("Update product {}", product.getName());
-        return productRepository.save(product);
+    public ProductDTO convertToProductDTO(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(product.getId());
+        productDTO.setName(product.getName());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setCompareAtPrice(product.getCompareAtPrice());
+        productDTO.setEstimatedShipDate(product.getEstimatedShipDate());
+        // Set other properties if needed
+        return productDTO;
     }
+
+
+    @Override
+    public ProductDTO updateProduct(ProductDTO productDTO) {
+        Optional<Product> existingProductOptional = productRepository.findById(productDTO.getId());
+        if (existingProductOptional.isPresent()) {
+            log.info("Update product {}", productDTO.getName());
+
+            Product existingProduct = existingProductOptional.get();
+            existingProduct.setName(productDTO.getName());
+            existingProduct.setDescription(productDTO.getDescription());
+            existingProduct.setPrice(productDTO.getPrice());
+            existingProduct.setCompareAtPrice(productDTO.getCompareAtPrice());
+            existingProduct.setEstimatedShipDate(productDTO.getEstimatedShipDate());
+
+            Product updatedProduct = productRepository.save(existingProduct);
+            return convertToProductDTO(updatedProduct);
+        } else {
+            return null;
+        }
+    }
+
 
 
     @Override
