@@ -4,15 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
-import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -23,25 +19,24 @@ public class Product {
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true)
-    @NotEmpty(message = "Name is required")
+    @NotNull
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description")
     @Type(type = "text")
     private String description;
     @NotNull(message = "Price is required")
+
+    @Column(name = "price")
     private Double price;
+
+    @Column(name = "compare_at_price")
     private Double compareAtPrice;
+
+    @Column(name = "estimated_ship_date")
     private Date estimatedShipDate;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<ProductImage> images = new ArrayList<>();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<ProductThumbnail> thumbnails = new ArrayList<>();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<ProductTag> tags = new ArrayList<>();
 
 
 }

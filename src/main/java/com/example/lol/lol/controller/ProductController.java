@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -39,7 +38,7 @@ public class ProductController {
         int endIndex = Math.min(startIndex + pageSize, totalItems);
 
         List<Product> paginatedProducts = products.subList(startIndex, endIndex);
-    
+
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK", "Fetch success", paginatedProducts)
         );
@@ -78,31 +77,6 @@ public class ProductController {
         product.setCompareAtPrice(productRequest.getCompareAtPrice());
         product.setEstimatedShipDate(productRequest.getEstimatedShipDate());
         // Create ProductImage and add to the product
-        List<ProductImage> images = new ArrayList<>();
-        for (ProductRequestDto.ProductImageDto imageDto : productRequest.getImages()) {
-            ProductImage image = new ProductImage();
-            image.setName(imageDto.getName());
-            images.add(image);
-        }
-        product.setImages(images);
-
-        // Create ProductThumbnail and add to the product
-        List<ProductThumbnail> thumbnails = new ArrayList<>();
-        for (ProductRequestDto.ProductThumbnailDto thumbnailDto : productRequest.getThumbnails()) {
-            ProductThumbnail thumbnail = new ProductThumbnail();
-            thumbnail.setName(thumbnailDto.getName());
-            thumbnails.add(thumbnail);
-        }
-        product.setThumbnails(thumbnails);
-
-        // Create ProductTag and add to the product
-        List<ProductTag> tags = new ArrayList<>();
-        for (ProductRequestDto.ProductTagDto tagDto : productRequest.getTags()) {
-            ProductTag tag = new ProductTag();
-            tag.setName(tagDto.getName());
-            tags.add(tag);
-        }
-        product.setTags(tags);
 
         Product createdProduct = productService.saveProduct(product);
 

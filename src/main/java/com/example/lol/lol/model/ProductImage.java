@@ -6,17 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
+@Table(name = "product_image")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class ProductImage {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(name = "url")
+    private String url;
+
+    @Column(name = "product_id")
+    private Long productId;
 }

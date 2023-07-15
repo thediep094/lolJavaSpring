@@ -19,4 +19,5 @@ public class ProductTag {
     private Long id;
 
     private String name;
+    private Long productId;
 }

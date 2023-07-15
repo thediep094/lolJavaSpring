@@ -34,7 +34,7 @@ public class ProductServiceIml implements ProductService{
     }
     @Override
     public ProductImage saveProductImage(ProductImage productImage) {
-        log.info("Saving new product image {} to the database", productImage.getName());
+        log.info("Saving new product image {} to the database", productImage.getUrl());
         return productImageRepository.save(productImage);
     }
 

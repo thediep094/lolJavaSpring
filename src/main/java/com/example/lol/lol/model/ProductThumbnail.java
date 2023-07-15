@@ -19,4 +19,5 @@ public class ProductThumbnail {
     private Long id;
 
     private String name;
+    private Long productId;
 }
