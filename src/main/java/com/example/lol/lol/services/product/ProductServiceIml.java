@@ -21,8 +21,8 @@ import java.util.Optional;
 public class ProductServiceIml implements ProductService{
     @Autowired
     ProductRepository productRepository;
-
-    private ProductMapper productMapper;
+    @Autowired
+    ProductMapper productMapper;
 
     @Override
     public ProductDTO save(ProductDTO productDTO) {

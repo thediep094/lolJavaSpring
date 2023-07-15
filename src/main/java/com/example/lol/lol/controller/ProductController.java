@@ -25,18 +25,12 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping("/")
-    public ResponseEntity<ResponseObject> getAll(@RequestParam(required = false) String filter,
+    public ResponseEntity<ResponseObject> getAll(
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "10") int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-
         Page<ProductDTO> productPage;
-        if (filter != null && !filter.isEmpty()) {
-            // Apply filter logic here if needed
-            productPage = productService.findAll(pageable);
-        } else {
-            productPage = productService.findAll(pageable);
-        }
+        productPage = productService.findAll(pageable);
 
         List<ProductDTO> paginatedProducts = productPage.getContent();
 
