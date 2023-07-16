@@ -1,4 +1,4 @@
-package com.example.lol.lol.services.product;
+package com.example.lol.lol.services.domain;
 
 import com.example.lol.lol.model.*;
 import com.example.lol.lol.services.dto.ProductDTO;

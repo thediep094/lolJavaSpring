@@ -3,8 +3,8 @@ package com.example.lol.lol.database;
 
 import com.example.lol.lol.Repositories.*;
 import com.example.lol.lol.model.*;
-import com.example.lol.lol.services.account.AccountService;
-import com.example.lol.lol.services.product.ProductService;
+import com.example.lol.lol.services.domain.AccountService;
+import com.example.lol.lol.services.domain.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -56,6 +56,9 @@ public class Database {
                 productRepository.save(product);
 
 
+//                PRODUCT IMAGE
+
+                productImageRepository.save(new ProductImage(null, "this/is/url", 5L));
             }
         };
     }

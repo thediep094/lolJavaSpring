@@ -1,15 +1,14 @@
-package com.example.lol.lol.services.product;
+package com.example.lol.lol.services.Iml;
 
 import com.example.lol.lol.Repositories.ProductRepository;
 import com.example.lol.lol.model.*;
 import com.example.lol.lol.services.dto.ProductDTO;
 import com.example.lol.lol.services.mapper.ProductMapper;
-import com.example.lol.lol.services.specification.ProductSpecification;
+import com.example.lol.lol.services.domain.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class ProductServiceIml implements ProductService{
+public class ProductServiceIml implements ProductService {
     @Autowired
     ProductRepository productRepository;
     @Autowired

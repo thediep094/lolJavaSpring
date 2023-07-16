@@ -1,4 +1,4 @@
-package com.example.lol.lol.services.account;
+package com.example.lol.lol.services.domain;
 
 import com.example.lol.lol.model.Account;
 import com.example.lol.lol.model.Role;

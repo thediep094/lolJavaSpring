@@ -2,7 +2,7 @@ package com.example.lol.lol.controller;
 
 import com.example.lol.lol.model.Account;
 import com.example.lol.lol.model.ResponseObject;
-import com.example.lol.lol.services.account.AccountService;
+import com.example.lol.lol.services.domain.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

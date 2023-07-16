@@ -1,8 +1,12 @@
 package com.example.lol.lol.controller;
 
 import com.example.lol.lol.model.*;
+import com.example.lol.lol.services.domain.ProductImageService;
 import com.example.lol.lol.services.dto.ProductDTO;
-import com.example.lol.lol.services.product.ProductService;
+import com.example.lol.lol.services.domain.ProductService;
+import com.example.lol.lol.services.dto.ProductImageDTO;
+import com.example.lol.lol.services.dto.ProductRequestDto;
+import com.example.lol.lol.services.dto.ProductWithImagesDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,9 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+    @Autowired
+    ProductImageService productImageService;
+
     @GetMapping("/")
     public ResponseEntity<ResponseObject> getAll(
                                                  @RequestParam(defaultValue = "0") int page,
@@ -43,10 +50,16 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getProduct(@PathVariable Long id) {
         Optional<ProductDTO> optionalProduct = productService.findOne(id);
+        List<ProductImageDTO> images = productImageService.findAllByProductId(id);
+
         if (optionalProduct.isPresent()) {
             ProductDTO product = optionalProduct.get();
+            ProductWithImagesDTO productWithImagesDTO = new ProductWithImagesDTO();
+            productWithImagesDTO.setProduct(product);
+            productWithImagesDTO.setImages(images);
+
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Fetch success", product)
+                    new ResponseObject("OK", "Fetch success", productWithImagesDTO)
             );
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -65,6 +78,7 @@ public class ProductController {
             );
         }
 
+        //ProductDTO
         ProductDTO productDTO = new ProductDTO();
         productDTO.setName(productRequest.getName());
         productDTO.setDescription(productRequest.getDescription());
@@ -74,6 +88,17 @@ public class ProductController {
         // Create ProductImage and add it to the productDTO if needed
 
         ProductDTO createdProduct = productService.save(productDTO);
+
+        // Create and save ProductImages
+        if (productRequest.getImages() != null && !productRequest.getImages().isEmpty()) {
+            for (ProductImageDTO image : productRequest.getImages()) {
+                ProductImageDTO productImageDTO = new ProductImageDTO();
+                productImageDTO.setProductId(createdProduct.getId());
+                productImageDTO.setUrl(image.getUrl());
+                productImageService.save(productImageDTO);
+            }
+        }
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseObject("Created", "Product created successfully", createdProduct)

@@ -1,6 +1,7 @@
-package com.example.lol.lol.model;
+package com.example.lol.lol.services.dto;
 
 
+import com.example.lol.lol.services.dto.ProductImageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,7 @@ import java.util.List;
         private Double price;
         private Double compareAtPrice;
         private Date estimatedShipDate;
-        private List<ProductImageDto> images;
-        private List<ProductThumbnailDto> thumbnails;
-        private List<ProductTagDto> tags;
+        private List<ProductImageDTO> images;
 
         // Constructors, getters, and setters
         @NoArgsConstructor
@@ -28,18 +27,6 @@ import java.util.List;
         public static class ProductImageDto {
             private String name;
 
-        }
-        @NoArgsConstructor
-        @AllArgsConstructor
-        @Data
-        public static class ProductThumbnailDto {
-            private String name;
-        }
-        @NoArgsConstructor
-        @AllArgsConstructor
-        @Data
-        public static class ProductTagDto {
-            private String name;
         }
 
     }
