@@ -54,9 +54,14 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
 
+        //Images
+        http.authorizeRequests().antMatchers("/api/images/**").permitAll();
+
         //Allow All
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/products/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/products/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/products/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/products/**").permitAll();
 
         //Allow for user
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user/**").hasAnyAuthority("ROLE_USER");

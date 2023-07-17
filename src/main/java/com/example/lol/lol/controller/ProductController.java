@@ -14,11 +14,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,16 +56,10 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getProduct(@PathVariable Long id) {
         Optional<ProductDTO> optionalProduct = productService.findOne(id);
-        List<ProductImageDTO> images = productImageService.findAllByProductId(id);
 
         if (optionalProduct.isPresent()) {
-            ProductDTO product = optionalProduct.get();
-            ProductWithImagesDTO productWithImagesDTO = new ProductWithImagesDTO();
-            productWithImagesDTO.setProduct(product);
-            productWithImagesDTO.setImages(images);
-
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK", "Fetch success", productWithImagesDTO)
+                    new ResponseObject("OK", "Fetch success", optionalProduct)
             );
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -67,9 +67,10 @@ public class ProductController {
             );
         }
     }
+
     //Create product (Admin)
-    @PostMapping("/admin/create")
-    public ResponseEntity<ResponseObject> createProduct(@RequestBody ProductRequestDto productRequest) {
+    @PostMapping(value = "/admin/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseObject> createProduct(@ModelAttribute ProductRequestDto productRequest, @RequestParam("file") MultipartFile[] files) {
         // Check if a product with the same name already exists
         if (productService.existsByName(productRequest.getName())) {
             String errorMessage = "Product with the name " + productRequest.getName() + " already exists";
@@ -88,25 +89,23 @@ public class ProductController {
 
         ProductDTO createdProduct = productService.save(productDTO);
 
-        // Create and save ProductImages
-        if (productRequest.getImages() != null && !productRequest.getImages().isEmpty()) {
-            for (ProductImageDTO image : productRequest.getImages()) {
-                ProductImageDTO productImageDTO = new ProductImageDTO();
-                productImageDTO.setProductId(createdProduct.getId());
-                productImageDTO.setUrl(image.getUrl());
-                productImageService.save(productImageDTO);
-            }
+        productImageService.saveProductImages(productDTO.getId(), files);
+
+        List<ProductImageDTO> images =  productImageService.findAllByProductId(productDTO.getId());
+
+        if (productRequest.getImages() == null) {
+            productRequest.setImages(new ArrayList<>());
         }
-
-
+        productRequest.getImages().addAll(images);
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                new ResponseObject("Created", "Product created successfully", createdProduct)
+                new ResponseObject("Created", "Product created successfully", productRequest)
         );
     }
 
-    @PutMapping("/admin/{id}")
+    @PutMapping("/admin/update/{id}")
     public ResponseEntity<ResponseObject> putProduct(@PathVariable Long id, @RequestBody ProductRequestDto productRequest) {
         Optional<ProductDTO> optionalProduct = productService.findOne(id);
+        log.info("Start update product {}", id);
         if (optionalProduct.isPresent()) {
             ProductDTO existingProduct = optionalProduct.get();
 
@@ -125,6 +124,21 @@ public class ProductController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                     new ResponseObject("Not found", "Product not found", null)
+            );
+        }
+    }
+
+    @DeleteMapping("/admin/delete/{id}")
+    public ResponseEntity<ResponseObject> deleteProduct(@PathVariable Long id) {
+        Optional<ProductDTO> optionalProduct = productService.findOne(id);
+        if (optionalProduct.isPresent()) {
+            productService.delete(id);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("OK", "Product delete successfully", null)
+            );
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ResponseObject("Error", "Product not found", null)
             );
         }
     }

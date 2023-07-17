@@ -29,8 +29,7 @@ public class Database {
     CommandLineRunner initDatabase(AccountRepository accountRepository,
                                    ProductRepository productRepository,
                                    ProductImageRepository productImageRepository,
-                                   ProductTagRepository productTagRepository,
-                                   ProductThumbnailRepository productThumbnailRepository){
+                                   ProductTagRepository productTagRepository){
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {

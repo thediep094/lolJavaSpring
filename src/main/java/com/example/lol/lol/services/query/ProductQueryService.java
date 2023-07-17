@@ -1,4 +1,4 @@
-package com.example.lol.lol.query;
+package com.example.lol.lol.services.query;
 
 import com.example.lol.lol.Repositories.ProductRepository;
 import com.example.lol.lol.model.Product;
@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
-import javax.persistence.criteria.JoinType;
 import com.example.lol.lol.model.Product_;
 import java.util.List;
 

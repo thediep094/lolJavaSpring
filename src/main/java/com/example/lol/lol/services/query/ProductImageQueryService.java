@@ -1,4 +1,4 @@
-package com.example.lol.lol.query;
+package com.example.lol.lol.services.query;
 
 import com.example.lol.lol.Repositories.ProductImageRepository;
 import com.example.lol.lol.model.ProductImage;

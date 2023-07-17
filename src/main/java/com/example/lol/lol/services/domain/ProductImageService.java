@@ -3,6 +3,7 @@ package com.example.lol.lol.services.domain;
 import com.example.lol.lol.services.dto.ProductImageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,5 +22,7 @@ public interface ProductImageService {
 
     //Delete
     void delete(Long id);
+
+    void saveProductImages(Long productId, MultipartFile[] files);
 }
 

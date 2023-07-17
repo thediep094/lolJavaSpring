@@ -5,17 +5,23 @@ import com.example.lol.lol.model.ProductImage;
 import com.example.lol.lol.services.domain.ProductImageService;
 import com.example.lol.lol.services.dto.ProductImageDTO;
 import com.example.lol.lol.services.mapper.ProductImageMapper;
-import com.example.lol.lol.services.specification.ProductImageSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -70,9 +76,10 @@ public class ProductImageServiceIml implements ProductImageService {
     }
 
     @Override
-    public List<ProductImageDTO> findAllByProductId(Long productId) {
-        Specification conditions = Specification.where(ProductImageSpecification.hasProductId(productId));
-        return  productImageRepository.findAll(conditions);
+    public List<ProductImageDTO> findAllByProductId(Long productImageDTOId) {
+        List<ProductImage> productImages = productImageRepository.findAllByProductId(productImageDTOId);
+
+        return productImageMapper.toDto(productImages);
     }
 
     @Override
@@ -82,5 +89,31 @@ public class ProductImageServiceIml implements ProductImageService {
     }
 
 
+    @Override
+    public void saveProductImages(Long productId, MultipartFile[] files) {
+        String imageUploadDirectory = "images"; // Change to the desired folder name within your project
+
+        List<String> imageUrls = new ArrayList<>();
+        for (MultipartFile file : files) {
+            String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            try {
+                String projectDirectory = System.getProperty("user.dir");
+                String filePath = Paths.get(projectDirectory, imageUploadDirectory, filename).toString();
+
+                file.transferTo(new File(filePath));
+                imageUrls.add(filename);
+            } catch (IOException e) {
+                // Handle the exception appropriately
+                log.error("Failed to upload image: {}", e.getMessage());
+            }
+        }
+
+        for (String imageUrl : imageUrls) {
+            ProductImageDTO productImageDTO = new ProductImageDTO();
+            productImageDTO.setProductId(productId);
+            productImageDTO.setUrl(imageUrl);
+            save(productImageDTO);
+        }
+    }
 
 }
