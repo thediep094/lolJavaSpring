@@ -91,23 +91,26 @@ public class ProductImageServiceIml implements ProductImageService {
 
     @Override
     public void saveProductImages(Long productId, MultipartFile[] files) {
-        String imageUploadDirectory = "images"; // Change to the desired folder name within your project
+        String imageUploadDirectory = "src/main/resources/images"; // Change to the desired folder name within your project
 
         List<String> imageUrls = new ArrayList<>();
         for (MultipartFile file : files) {
             String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             try {
-                String projectDirectory = System.getProperty("user.dir");
-                String filePath = Paths.get(projectDirectory, imageUploadDirectory, filename).toString();
+                String filePath = new File(imageUploadDirectory).getAbsolutePath() + File.separator + filename;
 
+                // Save the file to the specified directory
                 file.transferTo(new File(filePath));
+
                 imageUrls.add(filename);
+                log.info("Upload to upload image: {}", filename);
             } catch (IOException e) {
                 // Handle the exception appropriately
                 log.error("Failed to upload image: {}", e.getMessage());
             }
         }
 
+        // Save the image URLs to your database or perform any necessary operations
         for (String imageUrl : imageUrls) {
             ProductImageDTO productImageDTO = new ProductImageDTO();
             productImageDTO.setProductId(productId);
@@ -115,5 +118,6 @@ public class ProductImageServiceIml implements ProductImageService {
             save(productImageDTO);
         }
     }
+
 
 }
