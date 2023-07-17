@@ -52,7 +52,6 @@ public class Database {
                 product.setDescription("Product 1 Description");
                 product.setPrice(10.0);
                 product.setCompareAtPrice(15.0);
-                product.setEstimatedShipDate(new Date());
                 productRepository.save(product);
 
 

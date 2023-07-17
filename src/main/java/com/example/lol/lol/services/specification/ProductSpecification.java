@@ -34,8 +34,4 @@ public class ProductSpecification {
                 builder.equal(root.get("compareAtPrice"), compareAtPrice);
     }
 
-    public static Specification<Product> hasEstimatedShipDate(Date estimatedShipDate) {
-        return (root, query, builder) ->
-                builder.equal(root.get("estimatedShipDate"), estimatedShipDate);
-    }
 }

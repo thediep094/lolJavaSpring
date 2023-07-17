@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Data
@@ -26,7 +28,6 @@ public class ProductDTO implements Serializable {
 
     private Double compareAtPrice;
 
-    private Date estimatedShipDate;
 
     @Override
     public boolean equals(Object o) {

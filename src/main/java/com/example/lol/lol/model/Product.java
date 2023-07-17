@@ -8,6 +8,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -33,10 +34,6 @@ public class Product {
 
     @Column(name = "compare_at_price")
     private Double compareAtPrice;
-
-    @Column(name = "estimated_ship_date")
-    private Date estimatedShipDate;
-
 
 
 }

@@ -84,7 +84,6 @@ public class ProductController {
         productDTO.setDescription(productRequest.getDescription());
         productDTO.setPrice(productRequest.getPrice());
         productDTO.setCompareAtPrice(productRequest.getCompareAtPrice());
-        productDTO.setEstimatedShipDate(productRequest.getEstimatedShipDate());
         // Create ProductImage and add it to the productDTO if needed
 
         ProductDTO createdProduct = productService.save(productDTO);
@@ -116,7 +115,6 @@ public class ProductController {
             existingProduct.setDescription(productRequest.getDescription());
             existingProduct.setPrice(productRequest.getPrice());
             existingProduct.setCompareAtPrice(productRequest.getCompareAtPrice());
-            existingProduct.setEstimatedShipDate(productRequest.getEstimatedShipDate());
 
             // Save the updated product
             ProductDTO updatedProduct = productService.save(existingProduct);
