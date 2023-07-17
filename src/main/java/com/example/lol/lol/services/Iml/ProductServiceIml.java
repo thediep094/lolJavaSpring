@@ -48,11 +48,11 @@ public class ProductServiceIml implements ProductService {
     public Boolean checkExistsByName(ProductRequestDto productRequest) {
         // Check if a product with the same name already exists
         if (productRepository.existsByName(productRequest.getName())) {
-            String errorMessage = "Product with the name " + productRequest.getName() + " already exists";
-            return false;
+            log.error("Product with the name {} already exists", productRequest.getName());
+            return true;
         }
         else {
-            return true;
+            return false;
         }
     }
 
@@ -65,10 +65,9 @@ public class ProductServiceIml implements ProductService {
         ProductDTO productDTO = productDTOMapper.toEntity(productRequest);
         log.debug("Request to save Product : {}", productDTO);
         Product product = productMapper.toEntity(productDTO);
-        product = productRepository.save(product);
-        ProductDTO result = productMapper.toDto(product);
+        Product newProduct = productRepository.save(product);
 
-        productImageService.saveProductImages(productDTO.getId(), files);
+        productImageService.saveProductImages(newProduct.getId(), files);
 
         List<ProductImageDTO> images =  productImageService.findAllByProductId(productDTO.getId());
 

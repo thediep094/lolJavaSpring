@@ -1,21 +1,15 @@
 package com.example.lol.lol.controller;
 
-import com.example.lol.lol.Repositories.ProductRepository;
 import com.example.lol.lol.model.*;
 import com.example.lol.lol.services.criteria.ProductCriteria;
-import com.example.lol.lol.services.domain.ProductImageService;
 import com.example.lol.lol.services.dto.ProductDTO;
 import com.example.lol.lol.services.domain.ProductService;
-import com.example.lol.lol.services.dto.ProductImageDTO;
 import com.example.lol.lol.services.dto.ProductRequestDto;
 
 import com.example.lol.lol.services.query.*;
-import com.example.lol.lol.services.mapper.ProductDTOMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -70,16 +64,17 @@ public class ProductController {
     //Create product (Admin)
     @PostMapping(value = "/admin/products/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseObject> createProduct(@ModelAttribute ProductRequestDto productRequest, @RequestParam("file") MultipartFile[] files) {
-
-
-
-        // Create ProductImage and add it to the productDTO if needed
-
         ProductRequestDto createdProduct = productService.save(productRequest, files);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                new ResponseObject("Created", "Product created successfully", productRequest)
-        );
+        if (createdProduct != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    new ResponseObject("Created", "Product created successfully", createdProduct)
+            );
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(
+                    new ResponseObject("Failure", "Product created failure", createdProduct)
+            );
+        }
     }
 
     /**
@@ -93,7 +88,7 @@ public class ProductController {
      * or with status {@code 500 (Internal Server Error)} if the productDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping(value = "/products/{id}", consumes = "application/merge-patch+json")
+    @PutMapping(value = "/admin/products/update/{id}", consumes = "application/merge-patch+json")
     public ResponseEntity<ProductDTO> partialUpdateProduct(
             @PathVariable(value = "id", required = false) final Long id,
             @NotNull @RequestBody ProductDTO productDTO
@@ -114,7 +109,7 @@ public class ProductController {
         return ResponseEntity.ok().body(productQueryService.countByCriteria(criteria));
     }
 
-    @DeleteMapping("/products/{id}")
+    @DeleteMapping("/products/admin/delete/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         log.debug("REST request to delete Product : {}", id);
         productService.delete(id);
