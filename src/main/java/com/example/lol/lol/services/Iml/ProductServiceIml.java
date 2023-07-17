@@ -2,34 +2,81 @@ package com.example.lol.lol.services.Iml;
 
 import com.example.lol.lol.Repositories.ProductRepository;
 import com.example.lol.lol.model.*;
+import com.example.lol.lol.services.domain.ProductImageService;
 import com.example.lol.lol.services.dto.ProductDTO;
+import com.example.lol.lol.services.dto.ProductImageDTO;
+import com.example.lol.lol.services.dto.ProductRequestDto;
+import com.example.lol.lol.services.mapper.ProductDTOMapper;
 import com.example.lol.lol.services.mapper.ProductMapper;
 import com.example.lol.lol.services.domain.ProductService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
 @Service
 @Slf4j
+@RequestScope
 public class ProductServiceIml implements ProductService {
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    ProductMapper productMapper;
+
+    private final ProductRepository productRepository;
+
+    private final ProductMapper productMapper;
+
+    private final ProductImageService productImageService;
+
+    private final ProductDTOMapper productDTOMapper;
+
+    private ProductDTO form;
+
+    public ProductServiceIml(ProductRepository productRepository, ProductMapper productMapper, ProductImageService productImageService, ProductDTOMapper productDTOMapper) {
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
+        this.productImageService = productImageService;
+        this.productDTOMapper = productDTOMapper;
+    }
+
+    // Validate
+    public Boolean checkExistsByName(ProductRequestDto productRequest) {
+        // Check if a product with the same name already exists
+        if (productRepository.existsByName(productRequest.getName())) {
+            String errorMessage = "Product with the name " + productRequest.getName() + " already exists";
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
 
     @Override
-    public ProductDTO save(ProductDTO productDTO) {
+    public ProductRequestDto save(ProductRequestDto productRequest, MultipartFile[] files) {
+        if(checkExistsByName(productRequest)) {
+            return null;
+        }
+        ProductDTO productDTO = productDTOMapper.toEntity(productRequest);
         log.debug("Request to save Product : {}", productDTO);
         Product product = productMapper.toEntity(productDTO);
         product = productRepository.save(product);
         ProductDTO result = productMapper.toDto(product);
-        return result;
+
+        productImageService.saveProductImages(productDTO.getId(), files);
+
+        List<ProductImageDTO> images =  productImageService.findAllByProductId(productDTO.getId());
+
+        if (productRequest.getImages() == null) {
+            productRequest.setImages(new ArrayList<>());
+        }
+        productRequest.getImages().addAll(images);
+        return productRequest;
     }
 
     @Override

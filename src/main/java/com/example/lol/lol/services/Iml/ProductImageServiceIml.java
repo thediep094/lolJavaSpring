@@ -35,7 +35,6 @@ public class ProductImageServiceIml implements ProductImageService {
     @Autowired
     ProductImageMapper productImageMapper;
 
-
     @Override
     public ProductImageDTO save(ProductImageDTO productImageDTO) {
         log.debug("Request to save ProductImage : {}", productImageDTO);
@@ -44,6 +43,7 @@ public class ProductImageServiceIml implements ProductImageService {
         ProductImageDTO result = productImageMapper.toDto(productImage);
         return result;
     }
+
 
     @Override
     public Optional<ProductImageDTO> partialUpdate(ProductImageDTO productImageDTO) {
