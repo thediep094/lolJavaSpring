@@ -35,7 +35,7 @@ public class ProductServiceIml implements ProductService {
 
     private final ProductDTOMapper productDTOMapper;
 
-    private ProductDTO form;
+    private ProductRequestDto form;
 
     public ProductServiceIml(ProductRepository productRepository, ProductMapper productMapper, ProductImageService productImageService, ProductDTOMapper productDTOMapper) {
         this.productRepository = productRepository;
@@ -52,31 +52,33 @@ public class ProductServiceIml implements ProductService {
             return true;
         }
         else {
-            return false;
+           return false;
         }
     }
 
 
     @Override
     public ProductRequestDto save(ProductRequestDto productRequest, MultipartFile[] files) {
-        if(checkExistsByName(productRequest)) {
+        this.form = productRequest;
+        if(checkExistsByName(form)) {
             return null;
         }
-        ProductDTO productDTO = productDTOMapper.toEntity(productRequest);
+        insertProduct(files);
+        return productRequest;
+    }
+
+    private void insertProduct(MultipartFile[] files) {
+        ProductDTO productDTO = productDTOMapper.toEntity(form);
         log.debug("Request to save Product : {}", productDTO);
         Product product = productMapper.toEntity(productDTO);
         Product newProduct = productRepository.save(product);
-
-        productImageService.saveProductImages(newProduct.getId(), files);
-
-        List<ProductImageDTO> images =  productImageService.findAllByProductId(productDTO.getId());
-
-        if (productRequest.getImages() == null) {
-            productRequest.setImages(new ArrayList<>());
-        }
-        productRequest.getImages().addAll(images);
-        return productRequest;
+        insertProductImage(newProduct.getId(),files);
     }
+
+    private void insertProductImage(Long id, MultipartFile[] files) {
+        productImageService.saveProductImages(id, files);
+    }
+
 
     @Override
     @Transactional(readOnly = true)
