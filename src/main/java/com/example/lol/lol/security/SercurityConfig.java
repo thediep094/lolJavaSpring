@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SercurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -49,26 +51,19 @@ public class SercurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/api/login/**").permitAll();
-
-
-        http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
-
-        //Images
-        http.authorizeRequests().antMatchers("/api/images/**").permitAll();
-
-        //Allow All
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/products/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/admin/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/admin/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/admin/**").permitAll();
-
-        //Allow for user
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user/**").hasAnyAuthority("ROLE_USER");
-        //Allow for Admin
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/admin/**").hasAnyAuthority("ROLE_ADMIN");
-
-        http.authorizeRequests().anyRequest().authenticated();
+        http.authorizeRequests()
+                .antMatchers("/api/login/**").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/api/images/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/carts/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/carts/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.PUT, "/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/user/**").hasAnyAuthority("ROLE_USER")
+                .antMatchers(HttpMethod.GET, "/api/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                .anyRequest().authenticated();
 
         http.addFilter(customAuthenticationFilter);
 

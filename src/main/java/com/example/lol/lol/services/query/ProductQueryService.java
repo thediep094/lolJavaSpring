@@ -22,10 +22,8 @@ import java.util.List;
 public class ProductQueryService extends QueryService<Product> {
     private final Logger log = LoggerFactory.getLogger(ProductQueryService.class);
 
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    ProductMapper productMapper;
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
     public ProductQueryService(
             ProductRepository productRepository,

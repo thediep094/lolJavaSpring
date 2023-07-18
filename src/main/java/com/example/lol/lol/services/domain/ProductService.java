@@ -12,7 +12,8 @@ import java.util.Optional;
 
 public interface ProductService {
     // Create new
-    ProductRequestDto save(ProductRequestDto productDTO, MultipartFile[] files);
+    ProductRequestDto saveNew(ProductRequestDto productDTO, MultipartFile[] files);
+    ProductDTO save(ProductDTO productDTO);
 
     //Get
     Optional<ProductDTO> findOne(Long id);

@@ -22,7 +22,9 @@ public interface ProductImageService {
 
     //Delete
     void delete(Long id);
+    void deleteAllByProductId(Long productId);
 
+    //save
     void saveProductImages(Long productId, MultipartFile[] files);
 }
 

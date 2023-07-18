@@ -6,7 +6,6 @@ import com.example.lol.lol.services.domain.ProductImageService;
 import com.example.lol.lol.services.dto.ProductImageDTO;
 import com.example.lol.lol.services.mapper.ProductImageMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,11 +25,15 @@ import java.util.UUID;
 @Slf4j
 public class ProductImageServiceIml implements ProductImageService {
 
-    @Autowired
-    ProductImageRepository productImageRepository;
+    private final ProductImageRepository productImageRepository;
 
-    @Autowired
-    ProductImageMapper productImageMapper;
+    private final ProductImageMapper productImageMapper;
+
+    public ProductImageServiceIml(ProductImageRepository productImageRepository, ProductImageMapper productImageMapper) {
+        this.productImageRepository = productImageRepository;
+        this.productImageMapper = productImageMapper;
+    }
+
 
     @Override
     public ProductImageDTO save(ProductImageDTO productImageDTO) {
@@ -88,10 +88,20 @@ public class ProductImageServiceIml implements ProductImageService {
         productImageRepository.deleteById(id);
     }
 
+    @Override
+    public void deleteAllByProductId(Long productId) {
+        log.debug("Request to delete all ProductImages by productId: {}", productId);
+        List<ProductImage> productImages = productImageRepository.findAllByProductId(productId);
+        productImageRepository.deleteAll(productImages);
+    }
 
     @Override
     public void saveProductImages(Long productId, MultipartFile[] files) {
+        // Delete old image
+        deleteAllByProductId(productId);
+
         String imageUploadDirectory = "src/main/resources/images"; // Change to the desired folder name within your project
+
 
         List<String> imageUrls = new ArrayList<>();
         for (MultipartFile file : files) {

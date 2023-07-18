@@ -57,8 +57,9 @@ public class ProductServiceIml implements ProductService {
     }
 
 
+
     @Override
-    public ProductRequestDto save(ProductRequestDto productRequest, MultipartFile[] files) {
+    public ProductRequestDto saveNew(ProductRequestDto productRequest, MultipartFile[] files) {
         this.form = productRequest;
         if(checkExistsByName(form)) {
             return null;
@@ -77,6 +78,15 @@ public class ProductServiceIml implements ProductService {
 
     private void insertProductImage(Long id, MultipartFile[] files) {
         productImageService.saveProductImages(id, files);
+    }
+
+    @Override
+    public ProductDTO save(ProductDTO productDTO) {
+        log.debug("Request to save Product : {}", productDTO);
+        Product product = productMapper.toEntity(productDTO);
+        product = productRepository.save(product);
+        ProductDTO result = productMapper.toDto(product);
+        return result;
     }
 
 
@@ -120,6 +130,7 @@ public class ProductServiceIml implements ProductService {
     public void delete(Long id) {
         log.debug("Request to delete Product : {}", id);
         productRepository.deleteById(id);
+        productImageService.deleteAllByProductId(id);
     }
 
 

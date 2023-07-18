@@ -24,11 +24,10 @@ import java.util.List;
 public class ProductImageQueryService  extends QueryService<ProductImage> {
     private final Logger log = LoggerFactory.getLogger(ProductImageQueryService.class);
 
-    @Autowired
-    ProductImageRepository productImageRepository;
 
-    @Autowired
-    ProductImageMapper productImageMapper;
+    private final ProductImageRepository productImageRepository;
+
+    private final ProductImageMapper productImageMapper;
 
     public ProductImageQueryService(
             ProductImageRepository productImageRepository,
