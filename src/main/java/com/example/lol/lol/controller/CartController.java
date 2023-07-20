@@ -5,6 +5,7 @@ import com.example.lol.lol.model.ResponseObject;
 import com.example.lol.lol.services.criteria.CartCriteria;
 import com.example.lol.lol.services.domain.CartService;
 import com.example.lol.lol.services.dto.CartDTO;
+import com.example.lol.lol.services.dto.CartWithCartItemDTO;
 import com.example.lol.lol.services.query.CartQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -187,10 +188,10 @@ public class CartController {
      */
     @PreAuthorize("hasRole('ADMIN') or #username == authentication.name")
     @GetMapping("/carts/{username}")
-    public ResponseEntity<CartDTO> getCart(@PathVariable String username) {
+    public ResponseEntity<ResponseObject> getCart(@PathVariable String username) {
         log.debug("REST request to get Cart : {}", username);
-        Optional<CartDTO> cartDTO = cartService.findOne(username);
-        return ResponseUtil.wrapOrNotFound(cartDTO);
+        CartWithCartItemDTO cart = cartService.findOne(username);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject("OK", "Fetch success", cart));
     }
 
     /**

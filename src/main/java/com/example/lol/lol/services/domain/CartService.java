@@ -1,6 +1,7 @@
 package com.example.lol.lol.services.domain;
 
 import com.example.lol.lol.services.dto.CartDTO;
+import com.example.lol.lol.services.dto.CartWithCartItemDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -31,13 +32,7 @@ public interface CartService {
      */
     Page<CartDTO> findAll(Pageable pageable);
 
-    /**
-     * Get the "id" cart.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    Optional<CartDTO> findOne(String username);
+    CartWithCartItemDTO findOne(String username);
 
     /**
      * Delete the "id" cart.

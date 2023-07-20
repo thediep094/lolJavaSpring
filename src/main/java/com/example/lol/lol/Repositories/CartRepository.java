@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface CartRepository extends JpaRepository<Cart, Long>, JpaSpecificationExecutor<Cart> {
 
-    Optional<Cart> findByUsername(String username);
+    Cart findByUsername(String username);
 
     boolean existsByUsername(String username);
 }

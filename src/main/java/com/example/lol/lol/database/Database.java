@@ -4,9 +4,11 @@ package com.example.lol.lol.database;
 import com.example.lol.lol.Repositories.*;
 import com.example.lol.lol.model.*;
 import com.example.lol.lol.services.domain.AccountService;
+import com.example.lol.lol.services.domain.CartItemService;
 import com.example.lol.lol.services.domain.CartService;
 import com.example.lol.lol.services.domain.ProductService;
 import com.example.lol.lol.services.dto.CartDTO;
+import com.example.lol.lol.services.dto.CartItemDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -29,11 +31,15 @@ public class Database {
     @Autowired
     CartService cartService;
 
+    @Autowired
+    CartItemService cartItemService;
+
 
     @Bean
     CommandLineRunner initDatabase(AccountRepository accountRepository,
                                    ProductRepository productRepository,
-                                   ProductImageRepository productImageRepository){
+                                   ProductImageRepository productImageRepository,
+                                   CartItemRepository cartItemRepository){
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
@@ -64,6 +70,9 @@ public class Database {
 
                 //Cart
                 cartService.save(new CartDTO(null, "test"));
+
+                //Cart item
+                cartItemRepository.save(new CartItem(null, 1L, 5L, 20));
             }
         };
     }
