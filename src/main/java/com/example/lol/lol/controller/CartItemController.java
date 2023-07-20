@@ -181,10 +181,11 @@ public class CartItemController {
     /**
      * Add and change quantity with productId
      */
-    @PutMapping("cart-items/add")
-    public ResponseEntity<ResponseObject> addQuantity(@RequestBody CartItemDTO cartItemDTO) {
+    @PreAuthorize("hasRole('ADMIN') or #username == authentication.name")
+    @PutMapping("cart-items/add/{username}")
+    public ResponseEntity<ResponseObject> addQuantity(@PathVariable String username,  @RequestBody CartItemDTO cartItemDTO) {
         log.info("Add quantity of product: {}", cartItemDTO.getProductId());
-        CartItemDTO cartItemDTO1 = cartItemService.updateQuantity(cartItemDTO);
+        CartItemDTO cartItemDTO1 = cartItemService.updateQuantity(cartItemDTO,username);
         if(cartItemDTO1 == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new ResponseObject("NOT OK", "Add failure" , cartItemDTO1)

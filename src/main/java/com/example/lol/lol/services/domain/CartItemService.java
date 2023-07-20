@@ -23,7 +23,7 @@ public interface CartItemService {
      * @param cartItemDTO the entity to save.
      * @return the persisted entity.
      */
-    CartItemDTO updateQuantity(CartItemDTO cartItemDTO);
+    CartItemDTO updateQuantity(CartItemDTO cartItemDTO, String username);
 
 
     /**
@@ -66,4 +66,6 @@ public interface CartItemService {
      */
     void delete(Long id);
 
+
+    void getCartId(String username);
 }

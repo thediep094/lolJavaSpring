@@ -1,6 +1,8 @@
 package com.example.lol.lol.services.Iml;
 
 import com.example.lol.lol.Repositories.CartItemRepository;
+import com.example.lol.lol.Repositories.CartRepository;
+import com.example.lol.lol.model.Cart;
 import com.example.lol.lol.model.CartItem;
 import com.example.lol.lol.services.domain.CartItemService;
 import com.example.lol.lol.services.dto.CartItemDTO;
@@ -24,20 +26,25 @@ public class CartItemServiceImpl implements CartItemService {
 
     private final CartItemMapper cartItemMapper;
 
+    private final CartRepository cartRepository;
+
+    private Long cartId;
+
     public CartItemServiceImpl(
-        CartItemRepository cartItemRepository,
-        CartItemMapper cartItemMapper
-    ) {
+            CartItemRepository cartItemRepository,
+            CartItemMapper cartItemMapper,
+            CartRepository cartRepository) {
         this.cartItemRepository = cartItemRepository;
         this.cartItemMapper = cartItemMapper;
+        this.cartRepository = cartRepository;
     }
 
     // Validate
     public Boolean checkExistProductId (CartItemDTO cartItemDTO) {
-        if(cartItemDTO.getProductId() != null) {
-            return false;
-        } else {
+        if(cartItemDTO.getProductId() == null) {
             return true;
+        } else {
+            return false;
         }
     }
 
@@ -51,18 +58,25 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public CartItemDTO updateQuantity(CartItemDTO cartItemDTO) {
+    public CartItemDTO updateQuantity(CartItemDTO cartItemDTO, String username) {
         log.info("Request to update quantity of product: {}", cartItemDTO.getProductId());
         if(checkExistProductId(cartItemDTO)){
             return null;
         }
-        CartItem cartItem = cartItemRepository.findByProductId(cartItemDTO.getProductId());
+        log.info("username: {}", username);
+        getCartId(username);
+        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(this.cartId, cartItemDTO.getProductId());
 
         Integer currentQuantity = cartItem.getQuantity();
         cartItem.setQuantity(currentQuantity + cartItemDTO.getQuantity());
         CartItem newCartItem = cartItemRepository.save(cartItem);
         CartItemDTO cartItemDTO1 = cartItemMapper.toDto(newCartItem);
         return cartItemDTO1;
+    }
+
+    public void getCartId(String username) {
+        Cart cartDTO = cartRepository.findByUsername(username);
+        this.cartId = cartDTO.getId();
     }
 
     @Override
