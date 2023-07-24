@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "`order`")
 public class Order implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -1,11 +1,20 @@
 package com.example.lol.lol.services.Iml;
 
+import com.example.lol.lol.Repositories.CartItemRepository;
+import com.example.lol.lol.Repositories.CartRepository;
+import com.example.lol.lol.Repositories.OrderItemRepository;
 import com.example.lol.lol.Repositories.OrderRepository;
+import com.example.lol.lol.model.Cart;
+import com.example.lol.lol.model.CartItem;
 import com.example.lol.lol.model.Order;
+import com.example.lol.lol.model.OrderItem;
 import com.example.lol.lol.services.domain.OrderService;
+
+import java.util.List;
 import java.util.Optional;
 
 import com.example.lol.lol.services.dto.OrderDTO;
+import com.example.lol.lol.services.mapper.CartItemToOrderItemMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,12 +33,24 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
 
+    private final OrderItemRepository orderItemRepository;
+
+    private final CartRepository cartRepository;
+
+    private final CartItemRepository cartItemRepository;
+
     private final OrderMapper orderMapper;
 
+    private final CartItemToOrderItemMapper cartItemToOrderItemMapper;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper) {
+
+    public OrderServiceImpl(OrderRepository orderRepository, OrderItemRepository orderItemRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, OrderMapper orderMapper, CartItemToOrderItemMapper cartItemToOrderItemMapper) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
         this.orderMapper = orderMapper;
+        this.cartItemToOrderItemMapper = cartItemToOrderItemMapper;
     }
 
     @Override
@@ -38,6 +59,21 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.toEntity(orderDTO);
         order = orderRepository.save(order);
         OrderDTO result = orderMapper.toDto(order);
+
+        Cart cart = cartRepository.findByUsername(orderDTO.getUsername());
+        List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.getId());
+
+        for ( CartItem cartItem : cartItems) {
+            OrderItem orderItem = cartItemToOrderItemMapper.toEntity(cartItem);
+            if (orderItem != null) {
+                orderItem.setOrderid(order.getId());
+                orderItemRepository.save(orderItem);
+            }
+
+            cartItemRepository.deleteByCartId(cartItem.getId());
+
+        }
+
         return result;
     }
 

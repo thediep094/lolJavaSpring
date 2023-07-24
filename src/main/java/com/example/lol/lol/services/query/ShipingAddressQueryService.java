@@ -7,7 +7,6 @@ import com.example.lol.lol.services.criteria.ShipingAddressCriteria;
 import com.example.lol.lol.services.dto.ShipingAddressDTO;
 import com.example.lol.lol.services.mapper.ShipingAddressMapper;
 import java.util.List;
-import javax.persistence.criteria.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
