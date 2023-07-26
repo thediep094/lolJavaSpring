@@ -59,7 +59,7 @@ public class OrderController {
         }
         OrderDTO result = orderService.save(orderDTO);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ResponseObject("OK", "Create success", result)
+                new ResponseObject("OK", "Create successfully", result)
         );
     }
 
