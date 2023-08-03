@@ -36,6 +36,15 @@ public class AccountServiceIml implements AccountService, UserDetailsService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    public Boolean accountExists(String username) {
+        Account account = accountRepository.findByUsername(username);
+        if(account == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByUsername(username);

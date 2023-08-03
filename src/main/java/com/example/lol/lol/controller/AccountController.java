@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,9 +18,28 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class AccountController {
-    @Autowired
-    AccountService accountService;
+    private final AccountService accountService;
 
+    // Create Account
+    @PostMapping("/create/accounts")
+    public ResponseEntity<ResponseObject> createAccount(@RequestBody Account request) {
+        // Check if the account with the given username already exists
+        if (accountService.accountExists(request.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ResponseObject("Bad Request", "Account with this username already exists", null)
+            );
+        }
+
+        // Set any other required fields for the account
+
+        // Save the account to the database
+        Account createdAccount = accountService.saveAccount(request);
+        accountService.addRoleToAccount(request.getUsername(), "ROLE_USER");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ResponseObject("Created", "Account created successfully", createdAccount)
+        );
+    }
 
     //USER
     @GetMapping("/user/account/{username}")
