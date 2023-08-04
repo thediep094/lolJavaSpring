@@ -20,9 +20,10 @@ public class Account {
     private Long id;
     private String username;
     private String password;
-    private String name;
-    private String inGame;
+    private String fullname;
+    private String ingame;
     private String avatar;
+    private String mail;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();

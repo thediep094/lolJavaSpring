@@ -28,6 +28,8 @@ public class ProductDTO implements Serializable {
 
     private Double compareAtPrice;
 
+    private String image;
+
 
     @Override
     public boolean equals(Object o) {

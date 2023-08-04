@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface ProductImageRepository extends JpaRepository<ProductImage, Long>, JpaSpecificationExecutor<ProductImage> {
     List<ProductImage> findAllByProductId(Long productId);
+    ProductImage findFirstByProductId(Long productId);
 }

@@ -48,8 +48,8 @@ public class Database {
                 accountService.saveRole(new Role(null, "ROLE_ADMIN"));
                 accountService.saveRole(new Role(null, "ROLE_USER"));
 
-                accountService.saveAccount(new Account(null, "admin", "admin", "admin", "admin", "abc", new ArrayList<>()));
-                accountService.saveAccount(new Account(null, "test", "test", "test", "test", "abc", new ArrayList<>()));
+                accountService.saveAccount(new Account(null, "admin", "admin", "admin", "admin", "https://ddragon-webp.lolmath.net/latest/img/profileicon/5710.webp", "mail", new ArrayList<>()));
+                accountService.saveAccount(new Account(null, "test", "test", "test", "test", "https://ddragon-webp.lolmath.net/latest/img/profileicon/5710.webp", "mail",new ArrayList<>()));
 
                 accountService.addRoleToAccount("admin", "ROLE_ADMIN");
                 accountService.addRoleToAccount("test", "ROLE_USER");

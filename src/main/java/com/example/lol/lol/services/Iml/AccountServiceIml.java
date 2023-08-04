@@ -63,7 +63,7 @@ public class AccountServiceIml implements AccountService, UserDetailsService {
 
     @Override
     public Account saveAccount(Account account) {
-        log.info("Saving new account {} to the database", account.getName());
+        log.info("Saving new account {} to the database", account.getFullname());
         // using bCryptPasswordEncoder()
         String encodedPassword = bCryptPasswordEncoder.encode(account.getPassword());
         account.setPassword(encodedPassword);
