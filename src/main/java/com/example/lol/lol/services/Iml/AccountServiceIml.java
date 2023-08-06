@@ -5,6 +5,8 @@ import com.example.lol.lol.Repositories.RoleRepository;
 import com.example.lol.lol.model.Account;
 import com.example.lol.lol.model.Role;
 import com.example.lol.lol.services.domain.AccountService;
+import com.example.lol.lol.services.domain.CartService;
+import com.example.lol.lol.services.dto.CartDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +34,13 @@ public class AccountServiceIml implements AccountService, UserDetailsService {
 
     @Autowired
     RoleRepository roleRepository;
-
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    CartService cartService;
 
     public Boolean accountExists(String username) {
-        Account account = accountRepository.findByUsername(username);
+        Account account = accountRepository.findTopByUsername(username);
         if(account == null) {
             return false;
         } else {
@@ -47,7 +50,7 @@ public class AccountServiceIml implements AccountService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findByUsername(username);
+        Account account = accountRepository.findTopByUsername(username);
         if( account == null) {
             log.error("Account not found in database");
             throw new UsernameNotFoundException("Account not found");
@@ -67,7 +70,11 @@ public class AccountServiceIml implements AccountService, UserDetailsService {
         // using bCryptPasswordEncoder()
         String encodedPassword = bCryptPasswordEncoder.encode(account.getPassword());
         account.setPassword(encodedPassword);
-        return accountRepository.save(account);
+        Account saveAccount = accountRepository.save(account);
+        CartDTO cartDTO = new CartDTO(null, account.getUsername());
+        cartService.save(cartDTO);
+
+        return saveAccount;
     }
 
     @Override
@@ -79,15 +86,15 @@ public class AccountServiceIml implements AccountService, UserDetailsService {
     @Override
     public void addRoleToAccount(String username, String roleName) {
         log.info("Adding role {} to account {}", roleName, username);
-        Account account = accountRepository.findByUsername(username);
-        Role role = roleRepository.findByName(roleName);
+        Account account = accountRepository.findTopByUsername(username);
+        Role role = roleRepository.findTopByName(roleName);
         account.getRoles().add(role);
     }
 
     @Override
     public Account getAccount(String username) {
         log.info("Fetching account {}", username);
-        return accountRepository.findByUsername(username);
+        return accountRepository.findTopByUsername(username);
     }
 
     @Override

@@ -36,6 +36,8 @@ public class AccountController {
         Account createdAccount = accountService.saveAccount(request);
         accountService.addRoleToAccount(request.getUsername(), "ROLE_USER");
 
+
+
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseObject("Created", "Account created successfully", createdAccount)
         );
