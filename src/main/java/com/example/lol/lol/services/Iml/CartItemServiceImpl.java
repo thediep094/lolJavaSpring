@@ -63,8 +63,20 @@ public class CartItemServiceImpl implements CartItemService {
         if(checkExistProductId(cartItemDTO)){
             return null;
         }
+
         log.info("username: {}", username);
         getCartId(username);
+
+        CartItem checkExitsCartItem = cartItemRepository.findFirstByCartIdAndAndProductId(this.cartId, cartItemDTO.getProductId());
+
+        if(checkExitsCartItem == null) {
+
+            CartItem newCartItem = cartItemMapper.toEntity(cartItemDTO);
+            newCartItem.setCartId(this.cartId);
+            CartItem saveCartItem = cartItemRepository.save(newCartItem);
+            return  cartItemMapper.toDto(saveCartItem);
+        }
+
         CartItem cartItem = cartItemRepository.findByCartIdAndProductId(this.cartId, cartItemDTO.getProductId());
 
         Integer currentQuantity = cartItem.getQuantity();
@@ -95,6 +107,8 @@ public class CartItemServiceImpl implements CartItemService {
             .map(cartItemRepository::save)
             .map(cartItemMapper::toDto);
     }
+
+
 
     @Override
     @Transactional(readOnly = true)
